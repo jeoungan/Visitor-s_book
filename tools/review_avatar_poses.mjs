@@ -16,6 +16,7 @@ globalThis.fetch=async value=>({ok:true,json:async()=>JSON.parse(fs.readFileSync
 const {defaultAvatar,loadAvatars,drawAvatar,actions}=await import('../public/avatar.js');
 await loadAvatars();
 const actionsOnly=process.argv.includes('--actions-only');
+const baselineOnly=process.argv.includes('--baseline-only');
 assert.deepEqual(actions.map(([id])=>id),['idle','wave','dance','clap','spin']);
 function sheet(name,columns,rows,render){
  const canvas=createCanvas(columns*160,rows*180),ctx=canvas.getContext('2d');
@@ -27,6 +28,8 @@ function sheet(name,columns,rows,render){
  }
  fs.writeFileSync(path.join(destination,name+'.png'),canvas.toBuffer('image/png'));
 }
+for(const start of [0,8])sheet(`idle-walk-baseline-${start}-${start+7}`,9,8,(row,column)=>({avatar:{...defaultAvatar(),outfit:start+row,hair:start+row},moving:column>0,direction:column?['front','left','right','back'][Math.floor((column-1)/2)]:'front',gait:column?((column-1)%2+.1)*Math.PI:0,label:`O${start+row} ${column?['F','L','R','B'][Math.floor((column-1)/2)]+((column-1)%2):'IDLE'}`}));
+if(baselineOnly)process.exit(0);
 for(const action of ['wave','dance','clap'])for(const start of [0,8]){
  sheet(`${action}-${start}-${start+7}`,4,8,(row,frame)=>({avatar:{...defaultAvatar(),outfit:start+row,hair:start+row,action},time:(frame+.2)/(action==='dance'?4:5),label:`${start+row} ${action} ${frame}`}));
 }

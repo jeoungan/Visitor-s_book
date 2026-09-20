@@ -100,3 +100,45 @@ test('nearby-person indexing preserves full-crowd yielding and walking across ce
  assert.ok(neighbors.nearby(center).includes(other));assert.ok(!neighbors.nearby(center).includes(far));
  other.x=1000;neighbors.update(other);assert.ok(!neighbors.nearby(center).includes(other));
 });
+
+test('following a slower guest yields in stable intervals instead of alternating walk and front every frame',()=>{
+ const state=createWanderer({id:'follow-repro',x:768,y:600},1024);
+ Object.assign(state,{wait:0,speed:40,route:[{x:900,y:600}]});
+ const leader={x:802.2,y:600},runs=[];
+ for(let frame=0;frame<180;frame++){
+  leader.x+=20/60;
+  const before={x:state.x,y:state.y};
+  stepWanderer(state,1/60,1024,[leader]);
+  const last=runs.at(-1);
+  if(last?.moving===state.moving)last.frames++;else runs.push({moving:state.moving,frames:1});
+  assert.ok(walkable(state.x,state.y));
+  assert.ok(Math.hypot(state.x-before.x,state.y-before.y)<=state.speed/60+.00001);
+  assert.ok(Math.hypot(state.x-leader.x,state.y-leader.y)>=34-.00001);
+  if(!state.moving)assert.equal(state.facing,'front');
+ }
+ assert.ok(runs.length<=12,`3-second walk/rest transitions: ${runs.length-1}`);
+ for(const run of runs.slice(0,-1))assert.ok(run.frames>=12,`short flicker burst: ${JSON.stringify(run)}`);
+ assert.ok(state.x>798,'yielding must still make forward progress');
+});
+
+test('a blocked guest keeps its yield pause across external stops and eventually chooses a clear route',()=>{
+ const state=createWanderer({id:'stationary-blocker-repro',x:768,y:600},1024);
+ Object.assign(state,{wait:0,speed:40,route:[{x:900,y:600}]});
+ const blocker={x:800,y:600};
+ stepWanderer(state,1/60,1024,[blocker]);
+ assert.equal(state.moving,false);assert.equal(state.facing,'front');assert.ok(state.wait>=.3);
+ const paused={x:state.x,y:state.y,wait:state.wait,route:JSON.stringify(state.route),gait:state.gait};
+ for(let frame=0;frame<90;frame++)stepWanderer(state,1/60,1024,[blocker],true);
+ assert.deepEqual({x:state.x,y:state.y,wait:state.wait,route:JSON.stringify(state.route),gait:state.gait},paused);
+ let moved=false,range=0;
+ for(let frame=0;frame<600;frame++){
+  const before={x:state.x,y:state.y},oldGap=Math.hypot(state.x-blocker.x,state.y-blocker.y);
+  stepWanderer(state,1/60,1024,[blocker]);
+  assert.ok(walkable(state.x,state.y));
+  assert.ok(Math.hypot(state.x-before.x,state.y-before.y)<=state.speed/60+.00001);
+  const gap=Math.hypot(state.x-blocker.x,state.y-blocker.y);
+  assert.ok(gap>=Math.min(34,oldGap)-.00001,'never squeeze closer through the blocker');
+  moved||=state.moving;range=Math.max(range,Math.hypot(state.x-paused.x,state.y-paused.y));
+ }
+ assert.ok(moved);assert.ok(range>50,'a stationary obstacle must not leave the guest permanently idle');
+});

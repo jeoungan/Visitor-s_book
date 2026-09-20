@@ -1,10 +1,10 @@
-import {movementFacing} from './avatar-state.js?v=20260920-poses2';
-import {layoutSpeechBubbles} from './speech.js?v=20260920-poses2';
-import {drawAvatar,defaultAvatar} from './avatar.js?v=20260920-poses2';
-import {walkable,nearestPoint,findPath} from './navigation.js?v=20260920-poses2';
-import {GARDEN_WIDTH,TILE_HEIGHT,gardenHeight} from './world.js?v=20260920-poses2';
-import {createWanderer,stepWanderer,createNeighborIndex} from './wander.js?v=20260920-poses2';
-import {tablesForHeight,TABLE_SPRITE} from './venue-layout.js?v=20260920-poses2';
+import {movementFacing} from './avatar-state.js?v=20260920-motion3';
+import {createSpeechScheduler} from './speech.js?v=20260920-motion3';
+import {drawAvatar,defaultAvatar} from './avatar.js?v=20260920-motion3';
+import {walkable,nearestPoint,findPath} from './navigation.js?v=20260920-motion3';
+import {GARDEN_WIDTH,TILE_HEIGHT,gardenHeight} from './world.js?v=20260920-motion3';
+import {createWanderer,stepWanderer,createNeighborIndex} from './wander.js?v=20260920-motion3';
+import {tablesForHeight,TABLE_SPRITE} from './venue-layout.js?v=20260920-motion3';
 export class Garden{
  constructor(canvas,onSelect,onMove){
  this.world={w:GARDEN_WIDTH,h:TILE_HEIGHT};this.canvas=canvas;this.ctx=canvas.getContext('2d');this.onSelect=onSelect;this.onMove=onMove;this.guests=[];this.player={id:'visitor',name:'나 · 방문객',x:768,y:500,avatar:defaultAvatar()};this.zoom=1;this.camera={x:768,y:0};this.keys=new Set();this.axis={x:0,y:0};this.target=null;this.direction='front';this.paused=false;this.reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;this.t=0;this.selected=null;this.follow=false;this.enabled=true;this.lastSave=0;
@@ -76,8 +76,9 @@ export class Garden{
  c.save();c.font='12px "Gowun Dodum",sans-serif';c.textAlign='left';c.textBaseline='top';
  const candidates=all.filter(g=>!g.isTable&&g.message).map(g=>({id:g.id,message:g.message,x:(g.x-this.camera.x)*this.scale+this.w/2,y:(g.y-106-this.camera.y)*this.scale+this.h/2}));
  const maxVisible=document.querySelector('#speech')?.hidden===false?0:this.w<960?2:3;
- for(const bubble of layoutSpeechBubbles(candidates,this.t,{width:this.w,height:this.h,top:66,bottom:this.h<560?94:132,maxVisible,measureText:text=>c.measureText(text).width})){
-  c.globalAlpha=Math.min(1,bubble.age/.12,(2.6-bubble.age)/.16);
+ this.speechScheduler??=createSpeechScheduler();
+ for(const bubble of this.speechScheduler.getLayout(candidates,this.t,{width:this.w,height:this.h,top:66,bottom:this.h<560?94:132,maxVisible,measureText:text=>c.measureText(text).width,reduced:this.reduced})){
+  c.globalAlpha=bubble.opacity;
   c.fillStyle='#fffef5f5';c.strokeStyle='#aeba9270';c.lineWidth=1;c.beginPath();c.roundRect(bubble.x,bubble.y,bubble.width,bubble.height,8);c.fill();c.stroke();
   const tailY=bubble.y+bubble.height;c.beginPath();c.moveTo(bubble.tailX-5,tailY-1);c.lineTo(bubble.tailX,tailY+6);c.lineTo(bubble.tailX+5,tailY-1);c.fill();
   c.fillStyle='#52633f';bubble.lines.forEach((line,index)=>c.fillText(line,bubble.x+12,bubble.y+9+index*17));

@@ -1,6 +1,6 @@
-import {selectedAccessories} from './accessories.js?v=20260920-poses2';
-import {bodyProportions,proportionY,bareArmStart,leftBareArmStart,LEFT_HAND_GRIPS,PROP_GRIPS} from './avatar-motion.js?v=20260920-poses2';
-import {poseFor} from './avatar-state.js?v=20260920-poses2';
+import {selectedAccessories} from './accessories.js?v=20260920-motion3';
+import {bodyProportions,proportionY,bareArmStart,leftBareArmStart,LEFT_HAND_GRIPS,PROP_GRIPS} from './avatar-motion.js?v=20260920-motion3';
+import {poseFor} from './avatar-state.js?v=20260920-motion3';
 export const outfits=['네이비 클래식','차콜 포멀','그레이 더블','브라운 체크','샌드 블레이저','네이비 니트','블랙 수트','세이지 셔츠','네이비 트위드','블루 트위드','로즈 원피스','세이지 랩드레스','블랙 미디','블라우스 플리츠','차콜 팬츠수트','라벤더 페플럼'];
 export const hairs=['댄디컷','6:4 가르마','볼륨 펌','내추럴 가르마','숏 크롭','소프트 펌','포마드','쉼표 머리','턱선 단발','C컬 단발','롱 웨이브','낮은 번','사이드 웨이브','반묶음','로우 포니테일','굵은 웨이브'];
 export const accessories=['없음','둥근 안경','사각 안경','골드 안경','꽃핀','리본핀','진주핀','별핀','진주 귀걸이','링 귀걸이','미니백','토트백','클러치','꽃다발','보타이','코르사주'];
@@ -13,7 +13,7 @@ export const defaultAvatar=()=>({outfit:0,hair:0,skin:0,hairColor:hairColors[0],
 export const randomAvatar=()=>{const items=[[1,2,3],[4,5,6,7],[8,9],[10,11,12,13],[14],[15]].filter(()=>Math.random()<.3).map(group=>group[Math.floor(Math.random()*group.length)]);return{...defaultAvatar(),outfit:Math.floor(Math.random()*16),hair:Math.floor(Math.random()*16),accessory:items[0]??0,accessories:items,skin:Math.floor(Math.random()*6),hairColor:hairColors[Math.floor(Math.random()*hairColors.length)]}};
 const NECK_SKIN_BOUNDS={4:[59,68,53],8:[58,69,53],9:[58,69,59],11:[58,69,59],13:[59,68,53]};
 const EARRING_ANCHORS=[[[48,41],[80,41]],[[48,41],[80,41]],[[48,41],[80,41]],[[48,41],[80,41]],[[48,41],[80,41]],[[48,41],[80,41]],[[48,41],[80,41]],[[48,41],[80,41]],[[51,40],[77,40]],[[51,40],[77,40]],[[50,40],[77,40]],[[48,40],[80,40]],[[51,40],[77,40]],[[50,40],[78,40]],[[48,40],[80,40]],[[51,40],[77,40]]];
-const bodyImages=[], headImages=[], accessoryImages=[],cache=new Map(),spriteLayers=new WeakMap(),poseCache=new Map(),headCache=new Map(),handForegroundCache=new WeakMap(),atlases={},masks={};
+const bodyImages=[], headImages=[], accessoryImages=[],cache=new Map(),spriteLayers=new WeakMap(),poseCache=new Map(),headCache=new Map(),avatarFrameCache=new Map(),handForegroundCache=new WeakMap(),atlases={},masks={};
 let assetLoadPromise,poseManifest;
 function load(src){return new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=()=>reject(new Error('캐릭터 이미지를 불러오지 못했어요.'));im.src=src})}
 export function loadAvatars(){return assetLoadPromise??=(async()=>{
@@ -22,9 +22,9 @@ export function loadAvatars(){return assetLoadPromise??=(async()=>{
   Promise.all(Array.from({length:16},(_,i)=>load(`/assets/bodies/body-${i+1}.png`))),
   Promise.all(Array.from({length:16},(_,i)=>load(`/assets/heads/head-${i+1}.png`))),
   Promise.all(Array.from({length:15},(_,i)=>load(`/assets/accessories/accessory-${i+2}.png`))),
-  fetch('/assets/poses-v2/manifest.json?v=20260920-poses2').then(r=>{if(!r.ok)throw new Error('동작 정보를 불러오지 못했어요.');return r.json()}),
+  fetch('/assets/poses-v2/manifest.json?v=20260920-motion3').then(r=>{if(!r.ok)throw new Error('동작 정보를 불러오지 못했어요.');return r.json()}),
   ...families.map(async family=>{[atlases[family],masks[family]]=await Promise.all([
-   load(`/assets/poses-v2/${family}.png?v=20260920-poses2`),load(`/assets/poses-v2/${family}-skin.png?v=20260920-poses2`)
+   load(`/assets/poses-v2/${family}.png?v=20260920-motion3`),load(`/assets/poses-v2/${family}-skin.png?v=20260920-motion3`)
   ])})
  ]);
  for(const family of ['wave','dance','clap','walk']){
@@ -103,10 +103,14 @@ function restingBody(a){
   ctx.drawImage(layers.body,0,ankle,128,128-ankle,0,ankle,128,128-ankle);
   poseCache.set(key,canvas);trimCache(poseCache);
  }
- return{image:poseCache.get(key)||original,metadata:{neck:[64,39],hand:[LEFT_HAND_GRIPS[a.outfit][0],proportionY(LEFT_HAND_GRIPS[a.outfit][1],a.outfit)]},frontHead:layers?.head};
+ return{image:poseCache.get(key)||original,metadata:{neck:poseManifest.resting?.[a.outfit]?.neck||[64,39],hand:[LEFT_HAND_GRIPS[a.outfit][0],proportionY(LEFT_HAND_GRIPS[a.outfit][1],a.outfit)]},frontHead:layers?.head};
 }
 function drawExtras(ctx,a,pose,metadata,headOffset,handOnly=false){
  const [hx,hy]=headOffset,direction=pose.direction;
+ const registration=poseManifest.heads?.[a.hair]?.[DIRECTIONS.indexOf(direction)]?.accessoryTransform;
+ const scale=direction==='front'?1:registration?.scale||1;
+ const point=(x,y)=>direction==='front'?[hx+x,hy+y]:[hx+(registration?.to[0]??64)+(x-64)*scale,hy+(registration?.to[1]??47)+(y-47)*scale];
+ const rect=(image,x,y,w,h)=>{const [px,py]=point(x,y);ctx.drawImage(image,px,py,w*scale,h*scale)};
  for(const ai of selectedAccessories(a)){
   const image=accessoryImages[ai];if(!image)continue;
   if(Boolean(PROP_GRIPS[ai])!==handOnly)continue;
@@ -116,15 +120,15 @@ function drawExtras(ctx,a,pose,metadata,headOffset,handOnly=false){
   }
   if(ai>=1&&ai<=3){
    if(direction==='back')continue;
-   if(direction==='front')ctx.drawImage(image,hx+46.7,hy+16.6,34.6,24.3);
-   else{const left=direction==='left';ctx.drawImage(image,left?0:64,0,64,128,hx+(left?43:69),hy+17,13,24)}
+   if(direction==='front')rect(image,46.7,16.6,34.6,24.3);
+   else{const left=direction==='left',[px,py]=point(left?43:69,17);ctx.drawImage(image,left?0:64,0,64,128,px,py,13*scale,24*scale)}
   }else if(ai>=4&&ai<=7){
    const x=direction==='back'?75:direction==='left'?68:direction==='right'?54:77;
-   ctx.drawImage(image,hx+x-10.2,hy+1.2,20.5,20.5);
+   rect(image,x-10.2,1.2,20.5,20.5);
   }else if(ai===8||ai===9){
    if(direction==='back')continue;
    const ears=direction==='front'?EARRING_ANCHORS[a.hair]:[[direction==='left'?66:62,40]];
-   ears.forEach(([x,y],side)=>{const height=10.5,width=height/2,studY=ai===8?30/128:15/128,studX=ai===8?[34/64,27/64]:[34/64,28/64];ctx.drawImage(image,side*64,0,64,128,hx+x-width*studX[side],hy+y-9-height*studY,width,height)})
+   ears.forEach(([x,y],side)=>{const height=10.5,width=height/2,studY=ai===8?30/128:15/128,studX=ai===8?[34/64,27/64]:[34/64,28/64],[px,py]=point(x-width*studX[side],y-9-height*studY);ctx.drawImage(image,side*64,0,64,128,px,py,width*scale,height*scale)})
   }else if(direction==='front'){
    const [nx,ny]=metadata.neck||[64,39];
    if(ai===14)ctx.drawImage(image,nx-10.2,ny+1,20.5,15.4);
@@ -150,15 +154,23 @@ function drawHandOverProp(ctx,body){
 export function drawAvatar(ctx,avatar,x,y,size=80,time=0,moving=false,direction='front',reduced=false,gait=time*6){
  if(!poseManifest||bodyImages.length!==16)return;
  const a={...defaultAvatar(),...avatar},facing=typeof direction==='string'?direction:direction<0?'left':'right',pose=poseFor(a,moving,facing,time,gait,reduced);
- const body=pose.family==='idle'?restingBody(a):generatedBody(a,pose),neck=body.metadata.neck||[64,39],headOffset=[neck[0]-64,neck[1]-39];
+ const key=JSON.stringify([a,pose.family,pose.direction,pose.frame]);
+ if(!avatarFrameCache.has(key)){
+  const body=pose.family==='idle'?restingBody(a):generatedBody(a,pose),neck=body.metadata.neck||[64,39],rest=poseManifest.resting?.[a.outfit]?.neck||[64,39],headOffset=[Math.round(neck[0]-rest[0]),Math.round(neck[1]-rest[1])];
+  // Register all parts on one integer pixel grid before world scaling. Separate
+  // nearest-neighbor draws at fractional anchors made the neck and face flicker.
+  // Padding preserves hair/props when a genuine walking pose raises the torso.
+  const frame=document.createElement('canvas');frame.width=frame.height=176;const fc=frame.getContext('2d');fc.imageSmoothingEnabled=false;fc.translate(24,24);
+  fc.drawImage(body.image,0,0);drawExtras(fc,a,pose,body.metadata,headOffset,true);
+  if(selectedAccessories(a).some(item=>PROP_GRIPS[item]))drawHandOverProp(fc,body);
+  if(pose.direction==='front'){
+   const layers=spriteLayers.get(sprite(a));if(layers)fc.drawImage(layers.head,headOffset[0],headOffset[1]-9);
+  }else fc.drawImage(generatedHead(a,pose.direction),headOffset[0],headOffset[1]);
+  drawExtras(fc,a,pose,body.metadata,headOffset);avatarFrameCache.set(key,frame);trimCache(avatarFrameCache,384);
+ }
  ctx.save();ctx.translate(x-size/2,y-size);ctx.scale(size/128,size/128);ctx.imageSmoothingEnabled=false;
  // Spin retains the selected front portrait; directional art is exclusive to walking.
  if(!moving&&a.action==='spin'&&!reduced){ctx.translate(64,0);ctx.scale(Math.cos(time*4),1);ctx.translate(-64,0)}
- ctx.drawImage(body.image,0,0);drawExtras(ctx,a,pose,body.metadata,headOffset,true);
- if(selectedAccessories(a).some(item=>PROP_GRIPS[item]))drawHandOverProp(ctx,body);
- if(pose.direction==='front'){
-  const layers=spriteLayers.get(sprite(a));if(layers)ctx.drawImage(layers.head,headOffset[0],headOffset[1]-9);
- }else ctx.drawImage(generatedHead(a,pose.direction),headOffset[0],headOffset[1]);
- drawExtras(ctx,a,pose,body.metadata,headOffset);ctx.restore();
+ ctx.drawImage(avatarFrameCache.get(key),-24,-24);ctx.restore();
 }
 export function paintPreview(canvas,a,time=0,animate=false){const ctx=canvas.getContext('2d');if(canvas.width!==256)canvas.width=256;if(canvas.height!==340)canvas.height=340;ctx.clearRect(0,0,256,340);ctx.fillStyle='#9bad7d30';ctx.beginPath();ctx.ellipse(128,311,48,10,0,0,Math.PI*2);ctx.fill();drawAvatar(ctx,a,128,315,260,time,false,'front',!animate)}

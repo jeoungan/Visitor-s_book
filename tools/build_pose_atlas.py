@@ -19,6 +19,13 @@ QUADS = ((0, 1, 4, 5), (2, 3, 6, 7), (8, 9, 12, 13), (10, 11, 14, 15))
 DIRECTIONS = ['front', 'left', 'right', 'back']
 
 
+def resting_registration(outfit):
+    """Measure the actual preserved idle body, including its legacy y=-9 lift."""
+    source = Image.open(ROOT/f'public/assets/bodies/body-{outfit+1}.png').convert('RGBA')
+    x,y = neck_top(source)
+    return {'neck':[round(x),round(y-9)],'feet':125}
+
+
 def components(mask):
     """Four-connected pixel components, sorted largest first."""
     seen = np.zeros(mask.shape, dtype=bool)
@@ -193,7 +200,8 @@ def hand_anchor(mask, neck, action):
 def place_body_group(frames, outfit, action):
     infos = [(frame.getbbox(),neck_top(frame)) for frame in frames]
     heights = [box[3]-neck[1] for box,neck in infos]
-    scale = 86 / statistics.median(heights)
+    rest = resting_registration(outfit)
+    scale = (rest['feet']-rest['neck'][1]) / statistics.median(heights)
     for box,neck in infos:
         scale = min(scale, 60/max(neck[0]-box[0],box[2]-neck[0]), 116/(box[3]-box[1]))
     outputs=[]; masks=[]; metas=[]
@@ -201,10 +209,10 @@ def place_body_group(frames, outfit, action):
         crop = frame.crop(box)
         size = (max(1,round(crop.width*scale)),max(1,round(crop.height*scale)))
         resized = crop.resize(size,Image.Resampling.NEAREST)
-        x = round(64-(neck[0]-box[0])*scale)
+        x = round(rest['neck'][0]-(neck[0]-box[0])*scale)
         y = 125-size[1]
         out = Image.new('RGBA',(CELL,CELL));out.alpha_composite(resized,(x,y))
-        mapped = [round(x+(neck[0]-box[0])*scale,2),round(y+(neck[1]-box[1])*scale,2)]
+        mapped = [round(x+(neck[0]-box[0])*scale),round(y+(neck[1]-box[1])*scale)]
         mask = body_mask(out,mapped,outfit,action)
         outputs.append(out);masks.append(mask)
         metas.append({'neck':mapped,'hand':hand_anchor(mask,mapped,action),'scale':round(scale,6),'bounds':list(out.getbbox())})
@@ -230,6 +238,12 @@ def mask_for_head(image):
     return Image.fromarray(rgba)
 
 
+def skin_bounds(image):
+    ys,xs=np.nonzero(rgb_skin(image))
+    if not len(xs):return None
+    return [int(xs.min()),int(ys.min()),int(xs.max()+1),int(ys.max()+1)]
+
+
 def build_heads(manifest):
     atlas=Image.new('RGBA',(CELL*4,CELL*16));masks=Image.new('RGBA',atlas.size)
     metadata=[]
@@ -244,7 +258,12 @@ def build_heads(manifest):
             source_front=cells[local*4]
             front_neck=neck_bottom(source_front)
             target_top=front.getbbox()[1]
-            scale=(47-target_top)/(front_neck[1]-source_front.getbbox()[1])
+            legacy_scale=(47-target_top)/(front_neck[1]-source_front.getbbox()[1])
+            target_face,source_face=skin_bounds(front),skin_bounds(source_front)
+            # Register to the preserved face, not the hairstyle silhouette.
+            # A bun, fringe or wave must not change skull/face size on turning.
+            scale=(target_face[3]-target_face[1])/(source_face[3]-source_face[1])
+            target_neck=tuple(round(n) for n in neck_bottom(front))
             row=[]
             for direction in range(4):
                 if direction==0:
@@ -259,11 +278,11 @@ def build_heads(manifest):
                     box=raw.getbbox();crop=raw.crop(box)
                     size=(max(1,round(crop.width*scale)),max(1,round(crop.height*scale)))
                     resized=crop.resize(size,Image.Resampling.NEAREST)
-                    x=round(64-(neck[0]-box[0])*scale);y=round(47-(neck[1]-box[1])*scale)
+                    x=round(target_neck[0]-(neck[0]-box[0])*scale);y=round(target_neck[1]-(neck[1]-box[1])*scale)
                     out=Image.new('RGBA',(CELL,CELL));out.alpha_composite(resized,(x,y))
                 atlas.alpha_composite(out,(direction*CELL,hair*CELL))
                 masks.alpha_composite(mask_for_head(out),(direction*CELL,hair*CELL))
-                row.append({'neck':[64,47],'bounds':list(out.getbbox()),'scale':1 if direction==0 else round(scale,6)})
+                row.append({'neck':list(target_neck),'bounds':list(out.getbbox()),'faceBounds':skin_bounds(out),'scale':1 if direction==0 else round(scale,6),'accessoryTransform':{'scale':1 if direction==0 else round(scale/legacy_scale,6),'from':[64,47],'to':list(target_neck)}})
             metadata.append(row)
     atlas.save(BASE/'heads.png');masks.save(BASE/'heads-skin.png')
     manifest['heads']=metadata
@@ -281,7 +300,8 @@ def write_review(action, atlas, manifest):
             direction=phase//2 if action=='walk' else 0
             hair=outfit
             head=heads.crop((direction*128,hair*128,(direction+1)*128,(hair+1)*128))
-            tile.alpha_composite(head,(round(meta['neck'][0]-64),round(meta['neck'][1]-39)))
+            rest=manifest['resting'][outfit]['neck']
+            tile.alpha_composite(head,(round(meta['neck'][0]-rest[0]),round(meta['neck'][1]-rest[1])))
             review.alpha_composite(tile,(phase*128,outfit*128))
     artifact=ROOT/'artifacts/pose-atlas';artifact.mkdir(parents=True,exist_ok=True)
     review.convert('RGB').save(artifact/f'{action}-avatar-review.png')
@@ -327,7 +347,8 @@ def main():
     args=parser.parse_args()
     existing=BASE/'manifest.json'
     manifest=json.loads(existing.read_text()) if existing.exists() else {}
-    manifest.update({'version':2,'cellSize':CELL,'directions':DIRECTIONS,'headAnchor':[64,47],'bodyAnchor':[64,39]})
+    manifest.update({'version':3,'cellSize':CELL,'directions':DIRECTIONS,'resting':[resting_registration(i) for i in range(16)],'registration':'original-idle-face-and-neck'})
+    manifest.pop('headAnchor',None);manifest.pop('bodyAnchor',None)
     for key in ('actions','sources','missing'):manifest.setdefault(key,{})
     if args.only in ('all','heads') or not (BASE/'heads.png').exists():build_heads(manifest)
     for action in ('wave','dance','clap','walk'):
