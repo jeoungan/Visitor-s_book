@@ -40,13 +40,13 @@ test('deletion ignores older refreshes, prevents double submission and remains r
 });
 
 test('filtering while a second action is saving keeps the newly chosen action',async()=>{
- const timers=[],buttons=['idle','wave','heart'].map(action=>({dataset:{action},classList:{toggle(){}},setAttribute(){}})),nodes=new Map(),$=id=>{if(!nodes.has(id))nodes.set(id,{});return nodes.get(id)};
+ const timers=[],buttons=['idle','wave','clap'].map(action=>({dataset:{action},classList:{toggle(){}},setAttribute(){}})),nodes=new Map(),$=id=>{if(!nodes.has(id))nodes.set(id,{});return nodes.get(id)};
  const garden=Object.create(Garden.prototype);Object.assign(garden,{world:{w:1536,h:1024},npcStates:new Map(),guests:[],player:{id:'mine',x:729,y:835,avatar:{action:'idle'}},selected:null,route:[]});
  const context=vm.createContext({$,$$:()=>buttons,garden,actions:buttons.map(button=>[button.dataset.action,button.dataset.action]),api:async(_path,{body})=>({guest:{avatar:{action:JSON.parse(body).action}}}),toast(){},clearTimeout(){},setTimeout:fn=>{timers.push(fn);return timers.length},motionClientId:'test'});
  vm.runInContext(`var mutationEpoch=0,actionPending=false,actionRevision=0,actionSaveTimer,own={id:'mine',isMine:true,x:729,y:835,avatar:{action:'idle'}},guests=[own];${section('function syncActionState()',"$('#more').onclick=")}`,context);
  buttons[1].onclick();await timers.shift()();buttons[2].onclick();garden.setGuests(context.guests,1024);
- assert.equal(garden.player.avatar.action,'heart');assert.equal(context.own.avatar.action,'heart');assert.equal(context.guests[0].avatar.action,'heart');assert.equal(context.actionPending,true);
- await timers.shift()();assert.equal(context.actionPending,false);assert.equal(garden.player.avatar.action,'heart');
+ assert.equal(garden.player.avatar.action,'clap');assert.equal(context.own.avatar.action,'clap');assert.equal(context.guests[0].avatar.action,'clap');assert.equal(context.actionPending,true);
+ await timers.shift()();assert.equal(context.actionPending,false);assert.equal(garden.player.avatar.action,'clap');
 });
 
 test('registration expands the scene before placing guests in the second and third courtyard',async()=>{

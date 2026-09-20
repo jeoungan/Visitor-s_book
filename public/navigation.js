@@ -1,4 +1,4 @@
-import {tablesForTile,TABLE_RADIUS_X,TABLE_RADIUS_Y} from './venue-layout.js?v=20260920-review9';
+import {tablesForTile,TABLE_RADIUS_X,TABLE_RADIUS_Y} from './venue-layout.js?v=20260920-poses2';
 export const WIDTH=1536,TILE=1024,CELL=24,COURTYARD_TOP=400;
 export function walkable(x,y,height=1024){
  if(x<180||x>1356||y<COURTYARD_TOP||y>height-40)return false;

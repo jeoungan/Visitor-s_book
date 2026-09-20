@@ -1,0 +1,180 @@
+{
+  "generation": "builtin image_gen; new complete pose drawings referenced to original outfit bodies",
+  "approved_sheets": 8,
+  "approved_frames": 128,
+  "raw_generation_calls": 11,
+  "postprocess": "complete-body extraction and translation into equal 4x4 slots; sprite processor magenta/alpha cleanup, shared scaling and feet alignment",
+  "specific_corrections": {
+    "walk-2-3": "original row2/3 columns2/4 faced opposite direction; complete-cell order corrected before processing; final builtin image edit restores dark warm brown trousers to outfit3, keeping corrected directions",
+    "walk-4-5": "first generated profile phases were too similar; entire sheet regenerated with stride and passing poses",
+    "walk-6-7": "final builtin image edit restores dark charcoal gray trousers to outfit7"
+  },
+  "sheets": [
+    {
+      "sheet": "walk-0-1",
+      "outfits": [
+        0,
+        1
+      ],
+      "frames": 16,
+      "directions": [
+        "down",
+        "left",
+        "right",
+        "up"
+      ],
+      "phases": 2,
+      "edge_touch_frames": [],
+      "raw": "raw/walk-0-1.png",
+      "normalized": "raw/walk-0-1-normalized.png",
+      "processed": "processed/walk-0-1/sheet-transparent.png",
+      "prompt": "raw/walk-0-1-prompt.txt"
+    },
+    {
+      "sheet": "walk-2-3",
+      "outfits": [
+        2,
+        3
+      ],
+      "frames": 16,
+      "directions": [
+        "down",
+        "left",
+        "right",
+        "up"
+      ],
+      "phases": 2,
+      "edge_touch_frames": [],
+      "raw": "raw/walk-2-3.png",
+      "normalized": "raw/walk-2-3-normalized.png",
+      "processed": "processed/walk-2-3/sheet-transparent.png",
+      "prompt": "raw/walk-2-3-prompt.txt"
+    },
+    {
+      "sheet": "walk-4-5",
+      "outfits": [
+        4,
+        5
+      ],
+      "frames": 16,
+      "directions": [
+        "down",
+        "left",
+        "right",
+        "up"
+      ],
+      "phases": 2,
+      "edge_touch_frames": [],
+      "raw": "raw/walk-4-5.png",
+      "normalized": "raw/walk-4-5-normalized.png",
+      "processed": "processed/walk-4-5/sheet-transparent.png",
+      "prompt": "raw/walk-4-5-prompt.txt"
+    },
+    {
+      "sheet": "walk-6-7",
+      "outfits": [
+        6,
+        7
+      ],
+      "frames": 16,
+      "directions": [
+        "down",
+        "left",
+        "right",
+        "up"
+      ],
+      "phases": 2,
+      "edge_touch_frames": [],
+      "raw": "raw/walk-6-7.png",
+      "normalized": "raw/walk-6-7-normalized.png",
+      "processed": "processed/walk-6-7/sheet-transparent.png",
+      "prompt": "raw/walk-6-7-prompt.txt"
+    },
+    {
+      "sheet": "walk-8-9",
+      "outfits": [
+        8,
+        9
+      ],
+      "frames": 16,
+      "directions": [
+        "down",
+        "left",
+        "right",
+        "up"
+      ],
+      "phases": 2,
+      "edge_touch_frames": [],
+      "raw": "raw/walk-8-9.png",
+      "normalized": "raw/walk-8-9-normalized.png",
+      "processed": "processed/walk-8-9/sheet-transparent.png",
+      "prompt": "raw/walk-8-9-prompt.txt"
+    },
+    {
+      "sheet": "walk-10-11",
+      "outfits": [
+        10,
+        11
+      ],
+      "frames": 16,
+      "directions": [
+        "down",
+        "left",
+        "right",
+        "up"
+      ],
+      "phases": 2,
+      "edge_touch_frames": [],
+      "raw": "raw/walk-10-11.png",
+      "normalized": "raw/walk-10-11-normalized.png",
+      "processed": "processed/walk-10-11/sheet-transparent.png",
+      "prompt": "raw/walk-10-11-prompt.txt"
+    },
+    {
+      "sheet": "walk-12-13",
+      "outfits": [
+        12,
+        13
+      ],
+      "frames": 16,
+      "directions": [
+        "down",
+        "left",
+        "right",
+        "up"
+      ],
+      "phases": 2,
+      "edge_touch_frames": [],
+      "raw": "raw/walk-12-13.png",
+      "normalized": "raw/walk-12-13-normalized.png",
+      "processed": "processed/walk-12-13/sheet-transparent.png",
+      "prompt": "raw/walk-12-13-prompt.txt"
+    },
+    {
+      "sheet": "walk-14-15",
+      "outfits": [
+        14,
+        15
+      ],
+      "frames": 16,
+      "directions": [
+        "down",
+        "left",
+        "right",
+        "up"
+      ],
+      "phases": 2,
+      "edge_touch_frames": [],
+      "raw": "raw/walk-14-15.png",
+      "normalized": "raw/walk-14-15-normalized.png",
+      "processed": "processed/walk-14-15/sheet-transparent.png",
+      "prompt": "raw/walk-14-15-prompt.txt"
+    }
+  ],
+  "color_fix_backups": [
+    "walk-2-3-pre-color-fix.png",
+    "walk-6-7-pre-color-fix.png",
+    "walk-2-3-normalized-pre-color-fix.png",
+    "walk-6-7-normalized-pre-color-fix.png"
+  ]
+}

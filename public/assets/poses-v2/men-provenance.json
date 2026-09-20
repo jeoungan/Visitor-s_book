@@ -1,0 +1,101 @@
+{
+  "generator": "built-in image_gen",
+  "date": "2026-09-20",
+  "actionFamilies": [
+    "wave",
+    "dance",
+    "clap"
+  ],
+  "outfitIndices": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "frameLayout": {
+    "rows": 4,
+    "cols": 4,
+    "quadrants": [
+      [
+        0,
+        1,
+        4,
+        5
+      ],
+      [
+        2,
+        3,
+        6,
+        7
+      ],
+      [
+        8,
+        9,
+        12,
+        13
+      ],
+      [
+        10,
+        11,
+        14,
+        15
+      ]
+    ]
+  },
+  "references": "public/assets/bodies/body-1.png through body-8.png",
+  "postprocessing": "Preserved raw originals. For *.alpha-clean.png, RGBA set to zero only where alpha<64 to remove transparent generation residue. No limbs, clothing, or body pose transformed. generate2dsprite processor uses 4x4 grid extraction, shared scale, feet alignment, largest connected component, zero trim and edge cleaning.",
+  "sprites": [
+    {
+      "name": "men-0-3-wave",
+      "raw": "raw/men-0-3-wave.png",
+      "clean": "raw/men-0-3-wave.alpha-clean.png",
+      "prompt": "raw/men-0-3-wave.prompt.txt",
+      "processed": "processed/men-0-3-wave",
+      "visualQc": "16 complete headless bodies, exact four outfit identities, four distinct freshly generated action phases; all hands/feet contained."
+    },
+    {
+      "name": "men-0-3-dance",
+      "raw": "raw/men-0-3-dance.png",
+      "clean": "raw/men-0-3-dance.alpha-clean.png",
+      "prompt": "raw/men-0-3-dance.prompt.txt",
+      "processed": "processed/men-0-3-dance",
+      "visualQc": "16 complete headless bodies, exact four outfit identities, four distinct freshly generated action phases; all hands/feet contained."
+    },
+    {
+      "name": "men-0-3-clap",
+      "raw": "raw/men-0-3-clap.png",
+      "clean": "raw/men-0-3-clap.alpha-clean.png",
+      "prompt": "raw/men-0-3-clap.prompt.txt",
+      "processed": "processed/men-0-3-clap",
+      "visualQc": "16 complete headless bodies, exact four outfit identities, four distinct freshly generated action phases; all hands/feet contained."
+    },
+    {
+      "name": "men-4-7-wave",
+      "raw": "raw/men-4-7-wave.png",
+      "clean": "raw/men-4-7-wave.grid-clean.png",
+      "prompt": "raw/men-4-7-wave.prompt.txt",
+      "processed": "processed/men-4-7-wave",
+      "visualQc": "16 complete headless bodies, exact four outfit identities, four distinct freshly generated action phases; all hands/feet contained."
+    },
+    {
+      "name": "men-4-7-dance",
+      "raw": "raw/men-4-7-dance.png",
+      "clean": "raw/men-4-7-dance.alpha-clean.png",
+      "prompt": "raw/men-4-7-dance.prompt.txt",
+      "processed": "processed/men-4-7-dance",
+      "visualQc": "16 complete headless bodies, exact four outfit identities, four distinct freshly generated action phases; all hands/feet contained."
+    },
+    {
+      "name": "men-4-7-clap",
+      "raw": "raw/men-4-7-clap.png",
+      "clean": "raw/men-4-7-clap.alpha-clean.png",
+      "prompt": "raw/men-4-7-clap.prompt.txt",
+      "processed": "processed/men-4-7-clap",
+      "visualQc": "16 complete headless bodies, exact four outfit identities, four distinct freshly generated action phases; all hands/feet contained."
+    }
+  ]
+}

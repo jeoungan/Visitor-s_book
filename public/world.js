@@ -1,4 +1,4 @@
-import {walkable} from './navigation.js?v=20260920-review9';
+import {walkable} from './navigation.js?v=20260920-poses2';
 export const GARDEN_WIDTH=1536;
 export const TILE_HEIGHT=1024;
 export const GUESTS_PER_TILE=20;

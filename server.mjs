@@ -2,6 +2,7 @@ import http from 'node:http';
 import {nextFreeSlot,slotPosition,gardenHeight} from './public/world.js';
 import {nearestPoint} from './public/navigation.js';
 import {selectedAccessories} from './public/accessories.js';
+import {ACTION_IDS,normalizeAction} from './public/avatar-state.js';
 import { DatabaseSync } from 'node:sqlite';
 import { randomBytes, createHash, timingSafeEqual } from 'node:crypto';
 import { readFile, mkdir } from 'node:fs/promises';
@@ -39,7 +40,7 @@ function acceptMotion(guestId,channel,input){
 }
 const json = (res, code, value, headers={}) => { res.writeHead(code, { 'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store', ...headers }); res.end(JSON.stringify(value)); };
 const hash = s => createHash('sha256').update(s).digest('hex');
-const publicGuest = (g,owner) => ({id:g.id,name:g.name,side:g.side,message:g.message,avatar:JSON.parse(g.avatar),x:g.x,y:g.y,createdAt:g.created_at,updatedAt:g.updated_at,slot:g.slot,isMine:g.owner===owner});
+const publicGuest = (g,owner) => {const avatar=JSON.parse(g.avatar);return {id:g.id,name:g.name,side:g.side,message:g.message,avatar:{...avatar,action:normalizeAction(avatar.action)},x:g.x,y:g.y,createdAt:g.created_at,updatedAt:g.updated_at,slot:g.slot,isMine:g.owner===owner}};
 const rate = new Map();
 setInterval(()=>{const now=Date.now(); for(const [key,value] of rate) if(value.until<now)rate.delete(key)},60000).unref();
 function avatar(v={}) {
@@ -47,7 +48,7 @@ function avatar(v={}) {
  const integer=(k,max,def=0)=>Number.isInteger(v[k])&&v[k]>=0&&v[k]<=max?v[k]:def;
  const color=(k,def)=>/^#[0-9a-fA-F]{6}$/.test(v[k])?v[k]:def;
  const accessories=selectedAccessories(v);
- return {outfit:integer('outfit',15),hair:integer('hair',15),skin:integer('skin',5),hairColor:color('hairColor','#352b2a'),outfitColor:color('outfitColor','#344863'),recolor:!!v.recolor,accessory:accessories[0]??0,accessories,action:['idle','wave','bow','dance','clap','jump','heart','spin'].includes(v.action)?v.action:'idle'};
+ return {outfit:integer('outfit',15),hair:integer('hair',15),skin:integer('skin',5),hairColor:color('hairColor','#352b2a'),outfitColor:color('outfitColor','#344863'),recolor:!!v.recolor,accessory:accessories[0]??0,accessories,action:normalizeAction(v.action)};
 }
 async function body(req) { const chunks=[];let bytes=0;for await(const chunk of req){bytes+=chunk.length;if(bytes>20000)throw Object.assign(new Error('요청이 너무 커요.'),{status:413});chunks.push(chunk)}try{return JSON.parse(Buffer.concat(chunks).toString('utf8'))}catch{throw Object.assign(new Error('올바른 요청이 아니에요.'),{status:400})} }
 
@@ -99,8 +100,8 @@ const server=http.createServer(async(req,res)=>{
       if(!acceptMotion(row.id,'position',p))return json(res,200,{ok:true,applied:false});
       const point=nearestPoint(p,currentWorldHeight());db.prepare('UPDATE guests SET x=?,y=? WHERE id=?').run(point.x,point.y,row.id);return json(res,200,{ok:true,applied:true});
      }
-     if(req.method==='PATCH'&&match[2]==='/action'){const p=await body(req);if(!p||!['idle','wave','bow','dance','clap','jump','heart','spin'].includes(p.action))return json(res,400,{error:'동작을 다시 골라 주세요.'});const latest=db.prepare('SELECT avatar FROM guests WHERE id=?').get(row.id);if(!latest)return json(res,404,{error:'메시지를 찾을 수 없어요.'});if(!acceptMotion(row.id,'action',p))return json(res,200,{guest:publicGuest(db.prepare('SELECT * FROM guests WHERE id=?').get(row.id),owner),applied:false});const current=JSON.parse(latest.avatar);current.action=p.action;db.prepare('UPDATE guests SET avatar=?,updated_at=? WHERE id=?').run(JSON.stringify(current),new Date().toISOString(),row.id);return json(res,200,{guest:publicGuest(db.prepare('SELECT * FROM guests WHERE id=?').get(row.id),owner)});}
-     if(req.method==='PATCH'&&!match[2]){const raw=await body(req),input=validate(raw),latest=db.prepare('SELECT * FROM guests WHERE id=?').get(row.id);if(!latest)return json(res,404,{error:'메시지를 찾을 수 없어요.'});if(!acceptMotion(row.id,'action',raw))input.avatar.action=JSON.parse(latest.avatar).action;db.prepare('UPDATE guests SET name=?,side=?,message=?,avatar=?,updated_at=? WHERE id=?').run(input.name,input.side,input.message,JSON.stringify(input.avatar),new Date().toISOString(),row.id);return json(res,200,{guest:publicGuest(db.prepare('SELECT * FROM guests WHERE id=?').get(row.id),owner)});}
+     if(req.method==='PATCH'&&match[2]==='/action'){const p=await body(req);if(!p||!ACTION_IDS.includes(p.action))return json(res,400,{error:'동작을 다시 골라 주세요.'});const latest=db.prepare('SELECT avatar FROM guests WHERE id=?').get(row.id);if(!latest)return json(res,404,{error:'메시지를 찾을 수 없어요.'});if(!acceptMotion(row.id,'action',p))return json(res,200,{guest:publicGuest(db.prepare('SELECT * FROM guests WHERE id=?').get(row.id),owner),applied:false});const current=JSON.parse(latest.avatar);current.action=p.action;db.prepare('UPDATE guests SET avatar=?,updated_at=? WHERE id=?').run(JSON.stringify(current),new Date().toISOString(),row.id);return json(res,200,{guest:publicGuest(db.prepare('SELECT * FROM guests WHERE id=?').get(row.id),owner)});}
+     if(req.method==='PATCH'&&!match[2]){const raw=await body(req),input=validate(raw),latest=db.prepare('SELECT * FROM guests WHERE id=?').get(row.id);if(!latest)return json(res,404,{error:'메시지를 찾을 수 없어요.'});if(!acceptMotion(row.id,'action',raw))input.avatar.action=normalizeAction(JSON.parse(latest.avatar).action);db.prepare('UPDATE guests SET name=?,side=?,message=?,avatar=?,updated_at=? WHERE id=?').run(input.name,input.side,input.message,JSON.stringify(input.avatar),new Date().toISOString(),row.id);return json(res,200,{guest:publicGuest(db.prepare('SELECT * FROM guests WHERE id=?').get(row.id),owner)});}
      if(req.method==='DELETE'&&!match[2]){db.prepare('DELETE FROM motion_versions WHERE guest_id=?').run(row.id);db.prepare('DELETE FROM guests WHERE id=?').run(row.id);return json(res,200,{ok:true});}
    }
    return json(res,404,{error:'요청한 기능을 찾을 수 없어요.'});

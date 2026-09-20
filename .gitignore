@@ -3,11 +3,14 @@ data/
 .env.*
 !.env.example
 node_modules/
+__pycache__/
+*.pyc
 test-results/
 artifacts/
 docs/reference-source.js
 docs/reference.html
 public/assets/**/pipeline-meta.json
+public/assets/poses-v2/processed/
 *.sqlite
 *.sqlite-shm
 *.sqlite-wal
