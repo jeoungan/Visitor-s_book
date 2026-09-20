@@ -1,17 +1,18 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {ACTION_IDS,normalizeAction,movementFacing,poseFor} from '../public/avatar-state.js';
+import {actions} from '../public/avatar.js';
 import {Garden} from '../public/garden.js';
 import {createWanderer,stepWanderer} from '../public/wander.js';
 
 test('retired reactions resolve to a front-facing idle pose while supported choices remain available',()=>{
- assert.deepEqual(ACTION_IDS,['idle','wave','dance','clap','spin']);
- for(const action of ['bow','jump','heart',undefined,null,'unknown']){
+ assert.deepEqual(ACTION_IDS,['idle','wave','dance','clap']);
+ assert.deepEqual(actions.map(([id])=>id),ACTION_IDS);
+ for(const action of ['bow','jump','heart','spin',undefined,null,'unknown']){
   assert.equal(normalizeAction(action),'idle');
   const pose=poseFor({action},false,'back',.4);
   assert.equal(pose.family,'idle');assert.equal(pose.direction,'front');
  }
- assert.equal(normalizeAction('spin'),'spin');
 });
 
 test('each generated reaction selects all four fresh frames and loops in its own family',()=>{

@@ -1,5 +1,5 @@
 // Shared by saved data, the editor, and the renderer.
-export const ACTION_IDS=['idle','wave','dance','clap','spin'];
+export const ACTION_IDS=['idle','wave','dance','clap'];
 export const normalizeAction=value=>ACTION_IDS.includes(value)?value:'idle';
 export function movementFacing(dx,dy,previous='front'){
  if(Math.hypot(dx,dy)<.001)return 'front';

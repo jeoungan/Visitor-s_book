@@ -87,7 +87,7 @@ test('deleting during a profile request returns not-found instead of a server er
  assert.equal(updated.status,404);assert.equal(updated.data.error,'메시지를 찾을 수 없어요.');
 });
 test('retired reactions normalize in saved profiles and explicit reaction requests reject them',async()=>{
- for(const action of ['bow','jump','heart']){
+ for(const action of ['bow','jump','heart','spin']){
   const session=(await request('/api/config','GET',undefined,'')).cookie;
   const created=await request('/api/guests','POST',{...payload,avatar:{...payload.avatar,action}},session,`retired-create-${action}`);
   assert.equal(created.status,201);assert.equal(created.data.guest.avatar.action,'idle');
@@ -99,8 +99,6 @@ test('retired reactions normalize in saved profiles and explicit reaction reques
    assert.equal((await request('/api/guests','GET',undefined,session)).data.guests.find(g=>g.id===guestId).avatar.action,'clap');
    const edited=await request(`/api/guests/${guestId}`,'PATCH',{...payload,avatar:{...payload.avatar,action}},session);
    assert.equal(edited.status,200);assert.equal(edited.data.guest.avatar.action,'idle');
-   const spin=await request(`/api/guests/${guestId}/action`,'PATCH',{action:'spin'},session);
-   assert.equal(spin.status,200);assert.equal(spin.data.guest.avatar.action,'spin');
   }finally{await request(`/api/guests/${guestId}`,'DELETE',{},session)}
  }
 });
@@ -111,7 +109,7 @@ test('legacy stored reactions read as idle without rewriting the saved guest',as
  // Only this suite's throwaway database is edited to represent a pre-upgrade record.
  const fixtureDb=new DatabaseSync(join(dir,'test.sqlite'));
  try{
-  for(const action of ['bow','jump','heart']){
+  for(const action of ['bow','jump','heart','spin']){
    const storedAvatar=JSON.stringify({...created.data.guest.avatar,action});
    fixtureDb.prepare('UPDATE guests SET avatar=? WHERE id=?').run(storedAvatar,guestId);
    const guest=(await request('/api/guests','GET',undefined,session)).data.guests.find(g=>g.id===guestId);

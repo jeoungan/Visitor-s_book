@@ -1,10 +1,10 @@
-import {movementFacing} from './avatar-state.js?v=20260920-motion3';
-import {createSpeechScheduler} from './speech.js?v=20260920-motion3';
-import {drawAvatar,defaultAvatar} from './avatar.js?v=20260920-motion3';
-import {walkable,nearestPoint,findPath} from './navigation.js?v=20260920-motion3';
-import {GARDEN_WIDTH,TILE_HEIGHT,gardenHeight} from './world.js?v=20260920-motion3';
-import {createWanderer,stepWanderer,createNeighborIndex} from './wander.js?v=20260920-motion3';
-import {tablesForHeight,TABLE_SPRITE} from './venue-layout.js?v=20260920-motion3';
+import {movementFacing} from './avatar-state.js?v=20260920-celebration4';
+import {createSpeechScheduler} from './speech.js?v=20260920-celebration4';
+import {drawAvatar,defaultAvatar} from './avatar.js?v=20260920-celebration4';
+import {walkable,nearestPoint,findPath} from './navigation.js?v=20260920-celebration4';
+import {GARDEN_WIDTH,TILE_HEIGHT,gardenHeight} from './world.js?v=20260920-celebration4';
+import {createWanderer,stepWanderer,createNeighborIndex} from './wander.js?v=20260920-celebration4';
+import {tablesForHeight,TABLE_SPRITE} from './venue-layout.js?v=20260920-celebration4';
 export class Garden{
  constructor(canvas,onSelect,onMove){
  this.world={w:GARDEN_WIDTH,h:TILE_HEIGHT};this.canvas=canvas;this.ctx=canvas.getContext('2d');this.onSelect=onSelect;this.onMove=onMove;this.guests=[];this.player={id:'visitor',name:'나 · 방문객',x:768,y:500,avatar:defaultAvatar()};this.zoom=1;this.camera={x:768,y:0};this.keys=new Set();this.axis={x:0,y:0};this.target=null;this.direction='front';this.paused=false;this.reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;this.t=0;this.selected=null;this.follow=false;this.enabled=true;this.lastSave=0;
@@ -56,6 +56,19 @@ export class Garden{
   return null;
  }
  safePoint(p){return nearestPoint(p,this.world.h)}
+ drawCouple(c){
+  if(!this.couple.complete||!this.couple.naturalWidth)return;
+  c.save();
+  const light=c.createRadialGradient(768,286,22,768,286,120);
+  light.addColorStop(0,'#fff4d04d');light.addColorStop(.55,'#fff0c422');light.addColorStop(1,'#fff0c400');
+  c.fillStyle=light;c.beginPath();c.ellipse(768,286,120,116,0,0,Math.PI*2);c.fill();
+  c.fillStyle='#37453235';c.beginPath();c.ellipse(768,370,65,10,0,0,Math.PI*2);c.fill();
+  c.drawImage(this.couple,676,196,184,184);
+  c.fillStyle='#314e40e8';c.strokeStyle='#eee0b5';c.lineWidth=1;
+  c.beginPath();c.roundRect(691,379,154,27,13);c.fill();c.stroke();
+  c.font='bold 14px "Gowun Dodum",sans-serif';c.textAlign='center';c.textBaseline='middle';c.fillStyle='#fff6da';c.fillText('신랑  ♥  신부',768,393);
+  c.restore();
+ }
  toWorld(x,y){return{x:(x-this.w/2)/this.scale+this.camera.x,y:(y-this.h/2)/this.scale+this.camera.y}}
  update(dt){if(this.hasDialog()){if(!this.dialogPaused){this.stop();for(const g of this.guests){g.moving=false;if(g.walk)g.walk.facing='front'}}this.dialogPaused=true;return}this.dialogPaused=false;this.t+=dt;if(!this.paused&&!this.reduced)this.npcTime+=dt;let dx=this.axis.x,dy=this.axis.y;dx+=(this.keys.has('d')||this.keys.has('arrowright')?1:0)-(this.keys.has('a')||this.keys.has('arrowleft')?1:0);dy+=(this.keys.has('s')||this.keys.has('arrowdown')?1:0)-(this.keys.has('w')||this.keys.has('arrowup')?1:0);
  if(this.target){dx=this.target.x-this.player.x;dy=this.target.y-this.player.y;if(Math.hypot(dx,dy)<5){this.target=this.route.shift()||null;dx=this.target?this.target.x-this.player.x:0;dy=this.target?this.target.y-this.player.y:0}}
@@ -65,7 +78,7 @@ export class Garden{
  const walkers=this.guests.filter(g=>g.id!==this.player.id),neighbors=createNeighborIndex([this.player,...walkers]);
  for(const g of walkers){stepWanderer(g.walk,dt,this.world.h,neighbors.nearby(g),this.paused||this.reduced||g.id===this.selected?.id);g.x=g.walk.x;g.y=g.walk.y;g.moving=g.walk.moving;neighbors.update(g)}
  }
- render(){const c=this.ctx;if(!this.w||!this.h)return;this.scale=Math.max(this.w/this.world.w,this.h/TILE_HEIGHT)*this.zoom;const halfW=this.w/this.scale/2,halfH=this.h/this.scale/2;this.camera.x=Math.max(halfW,Math.min(this.world.w-halfW,this.camera.x));this.camera.y=Math.max(halfH,Math.min(this.world.h-halfH,this.camera.y));c.setTransform(this.dpr,0,0,this.dpr,0,0);c.clearRect(0,0,this.w,this.h);c.save();c.translate(this.w/2,this.h/2);c.scale(this.scale,this.scale);c.translate(-this.camera.x,-this.camera.y);c.imageSmoothingEnabled=false;if(this.map.complete&&this.map.naturalWidth){c.drawImage(this.map,0,0,this.world.w,1024);for(let tile=1;tile<this.world.h/1024;tile++){if(tile*1024>this.camera.y+halfH||tile*1024+1024<this.camera.y-halfH)continue;c.drawImage(this.map,0,420,1536,380,0,tile*1024,1536,1024)}}if(this.couple.complete&&this.couple.naturalWidth){c.drawImage(this.couple,710,255,116,116);c.fillStyle='#fff9ed';c.font='13px "Gowun Dodum",sans-serif';c.textAlign='center';c.fillText('우리, 함께 시작해요',768,388)}
+ render(){const c=this.ctx;if(!this.w||!this.h)return;this.scale=Math.max(this.w/this.world.w,this.h/TILE_HEIGHT)*this.zoom;const halfW=this.w/this.scale/2,halfH=this.h/this.scale/2;this.camera.x=Math.max(halfW,Math.min(this.world.w-halfW,this.camera.x));this.camera.y=Math.max(halfH,Math.min(this.world.h-halfH,this.camera.y));c.setTransform(this.dpr,0,0,this.dpr,0,0);c.clearRect(0,0,this.w,this.h);c.save();c.translate(this.w/2,this.h/2);c.scale(this.scale,this.scale);c.translate(-this.camera.x,-this.camera.y);c.imageSmoothingEnabled=false;if(this.map.complete&&this.map.naturalWidth){c.drawImage(this.map,0,0,this.world.w,1024);for(let tile=1;tile<this.world.h/1024;tile++){if(tile*1024>this.camera.y+halfH||tile*1024+1024<this.camera.y-halfH)continue;c.drawImage(this.map,0,420,1536,380,0,tile*1024,1536,1024)}}this.drawCouple(c);
  const all=this.sceneEntities();
  for(const g of all){if(Math.abs(g.x-this.camera.x)>halfW+150||Math.abs(g.y-this.camera.y)>halfH+180)continue;
  if(g.isTable){if(this.table.complete&&this.table.naturalWidth)c.drawImage(this.table,g.x-TABLE_SPRITE.size/2,g.y-TABLE_SPRITE.offsetY,TABLE_SPRITE.size,TABLE_SPRITE.size);continue}

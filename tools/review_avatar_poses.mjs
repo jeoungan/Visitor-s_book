@@ -17,7 +17,7 @@ const {defaultAvatar,loadAvatars,drawAvatar,actions}=await import('../public/ava
 await loadAvatars();
 const actionsOnly=process.argv.includes('--actions-only');
 const baselineOnly=process.argv.includes('--baseline-only');
-assert.deepEqual(actions.map(([id])=>id),['idle','wave','dance','clap','spin']);
+assert.deepEqual(actions.map(([id])=>id),['idle','wave','dance','clap']);
 function sheet(name,columns,rows,render){
  const canvas=createCanvas(columns*160,rows*180),ctx=canvas.getContext('2d');
  ctx.fillStyle='#e9e2d2';ctx.fillRect(0,0,canvas.width,canvas.height);
@@ -37,6 +37,12 @@ if(!actionsOnly)for(const start of [0,8])sheet(`walk-${start}-${start+7}`,8,8,(r
 sheet('customization',8,8,(row,column)=>({avatar:{...defaultAvatar(),outfit:row+8,hair:column+8,action:['wave','dance','clap'][column%3],skin:column%6,hairColor:['#292627','#935f44','#bbb8ad'][column%3],outfitColor:['#ebe1c9','#afa0c1','#344863'][column%3],recolor:true,accessories:[3,4+column%4,8+column%2,10+column%4,14,15]},time:.3,label:`O${row+8} H${column+8} S${column%6}`}));
 if(!actionsOnly)sheet('directions-accessories',4,16,(row,column)=>({avatar:{...defaultAvatar(),outfit:row,hair:row,skin:row%6,hairColor:row%2?'#ba9360':'#292627',accessories:[3,4+row%4,8+row%2,10+row%4]},moving:true,direction:['front','left','right','back'][column],label:`${row} ${['F','L','R','B'][column]}`}));
 const probe=createCanvas(128,128),ctx=probe.getContext('2d');let checked=0;
+for(const time of [0,Math.PI/8,Math.PI/4]){
+ ctx.clearRect(0,0,128,128);drawAvatar(ctx,defaultAvatar(),64,128,128,time);
+ const idle=probe.toBuffer('image/png');
+ ctx.clearRect(0,0,128,128);drawAvatar(ctx,{...defaultAvatar(),action:'spin'},64,128,128,time);
+ assert.deepEqual(probe.toBuffer('image/png'),idle,'Retired spin must render the unchanged front-facing idle portrait');
+}
 for(let outfit=0;outfit<16;outfit++)for(const action of ['wave','dance','clap']){
  const signatures=[];
  for(let frame=0;frame<4;frame++){

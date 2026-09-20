@@ -1,8 +1,8 @@
-import {outfits,hairs,accessories,accessoryEmoji,accessoryImage,actions,skinColors,hairColors,outfitColors,defaultAvatar,randomAvatar,loadAvatars,paintPreview} from './avatar.js?v=20260920-motion3';
-import {Garden} from './garden.js?v=20260920-motion3';
-import {gardenHeight,TILE_HEIGHT,scatteredPositions} from './world.js?v=20260920-motion3';
-import {selectedAccessories,toggleAccessory} from './accessories.js?v=20260920-motion3';
-import {normalizeAction} from './avatar-state.js?v=20260920-motion3';
+import {outfits,hairs,accessories,accessoryEmoji,accessoryImage,actions,skinColors,hairColors,outfitColors,defaultAvatar,randomAvatar,loadAvatars,paintPreview} from './avatar.js?v=20260920-celebration4';
+import {Garden} from './garden.js?v=20260920-celebration4';
+import {gardenHeight,TILE_HEIGHT,scatteredPositions} from './world.js?v=20260920-celebration4';
+import {selectedAccessories,toggleAccessory} from './accessories.js?v=20260920-celebration4';
+import {normalizeAction} from './avatar-state.js?v=20260920-celebration4';
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const sideName={groom:'신랑 측',bride:'신부 측',both:'두 사람 모두'};
@@ -11,8 +11,8 @@ const prefs=(()=>{try{return JSON.parse(localStorage.getItem('gangjeong-garden-p
 function savePrefs(){try{localStorage.setItem('gangjeong-garden-preferences',JSON.stringify(prefs))}catch{}}
 function toast(message){clearTimeout(toastTimer);$$('#toast,.dialog-status').forEach(el=>{el.classList.remove('visible');if(el.classList.contains('dialog-status'))el.hidden=true});let target=$('#toast');const dialog=$('dialog[open]');if(dialog){target=dialog.querySelector('.dialog-status');if(!target){target=document.createElement('p');target.className='dialog-status';target.setAttribute('role','status');target.setAttribute('aria-live','polite');(dialog.querySelector('.dialog-top')||dialog.firstElementChild).after(target);dialog.addEventListener('close',()=>{target.hidden=true;target.textContent=''})}}target.hidden=false;target.textContent=message;target.classList.add('visible');toastTimer=setTimeout(()=>{target.classList.remove('visible');if(target.classList.contains('dialog-status'))target.hidden=true},5000)}
 async function api(path,options={}){const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),12000);try{const r=await fetch(path,{...options,credentials:'same-origin',signal:controller.signal,headers:{'Content-Type':'application/json',...options.headers}});const data=await r.json();if(!r.ok)throw new Error(data.error||'잠시 후 다시 시도해 주세요.');return data}finally{clearTimeout(timer)}}
-const names=['민지','준호','수빈','지훈','유진','도윤','소연','현우','지은','성민'];
-const demoStyles=[8,0,10,1,13,4,11,7,15,6];
+const names=['민지','준호','수빈','지훈','유진','도윤','소연','현우','지은','성민','하은','태현','예린','서준','은서','민수','다은','정우'];
+const demoStyles=[8,0,10,1,13,4,11,7,15,6,9,2,12,3,14,5,10,0];
 const wishes=['두 사람의 모든 계절을 응원해요 ♡','오늘처럼 매일 웃는 날이 가득하길!','세상에서 제일 예쁜 시작, 축하해요.','서로의 가장 좋은 친구가 되어 주세요.','함께라서 더 행복할 두 사람에게!','오래오래, 다정하게, 행복하게 살아요.','우리의 소중한 친구들, 결혼 축하해!','정원 가득 사랑을 두고 갑니다 🌷'];
 const demoPositions=scatteredPositions(names.length,1926);
 const demos=names.map((name,i)=>({id:`demo-${i}`,name,side:['groom','bride','both'][i%3],message:wishes[i%8],avatar:{...defaultAvatar(),outfit:demoStyles[i],hair:demoStyles[i],accessory:i%5===0?4:0,action:i%9===0?'wave':'idle'},...demoPositions[i],createdAt:'',demo:true}));

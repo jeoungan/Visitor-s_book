@@ -1,11 +1,11 @@
-import {selectedAccessories} from './accessories.js?v=20260920-motion3';
-import {bodyProportions,proportionY,bareArmStart,leftBareArmStart,LEFT_HAND_GRIPS,PROP_GRIPS} from './avatar-motion.js?v=20260920-motion3';
-import {poseFor} from './avatar-state.js?v=20260920-motion3';
+import {selectedAccessories} from './accessories.js?v=20260920-celebration4';
+import {bodyProportions,proportionY,bareArmStart,leftBareArmStart,LEFT_HAND_GRIPS,PROP_GRIPS} from './avatar-motion.js?v=20260920-celebration4';
+import {poseFor} from './avatar-state.js?v=20260920-celebration4';
 export const outfits=['네이비 클래식','차콜 포멀','그레이 더블','브라운 체크','샌드 블레이저','네이비 니트','블랙 수트','세이지 셔츠','네이비 트위드','블루 트위드','로즈 원피스','세이지 랩드레스','블랙 미디','블라우스 플리츠','차콜 팬츠수트','라벤더 페플럼'];
 export const hairs=['댄디컷','6:4 가르마','볼륨 펌','내추럴 가르마','숏 크롭','소프트 펌','포마드','쉼표 머리','턱선 단발','C컬 단발','롱 웨이브','낮은 번','사이드 웨이브','반묶음','로우 포니테일','굵은 웨이브'];
 export const accessories=['없음','둥근 안경','사각 안경','골드 안경','꽃핀','리본핀','진주핀','별핀','진주 귀걸이','링 귀걸이','미니백','토트백','클러치','꽃다발','보타이','코르사주'];
 export const accessoryEmoji=['—','👓','👓','👓','🌼','🎀','🤍','⭐','🤍','💛','👜','👜','👝','💐','🎀','🌸'];
-export const actions=[['idle','가만히','☺'],['wave','손인사','👋'],['dance','춤추기','♪'],['clap','박수','👏'],['spin','빙그르','↻']];
+export const actions=[['idle','가만히','☺'],['wave','손인사','👋'],['dance','춤추기','♪'],['clap','박수','👏']];
 export const skinColors=['#f2c5a0','#e2ad82','#ce9168','#ae7450','#865335','#65432f'];
 export const hairColors=['#292627','#48342d','#6a4939','#79675f','#935f44','#ba9360','#bbb8ad','#653b4b'];
 export const outfitColors=['#344863','#494a50','#9cbbcb','#c08a9a','#8eaa88','#afa0c1','#a48766','#ebe1c9'];
@@ -22,9 +22,9 @@ export function loadAvatars(){return assetLoadPromise??=(async()=>{
   Promise.all(Array.from({length:16},(_,i)=>load(`/assets/bodies/body-${i+1}.png`))),
   Promise.all(Array.from({length:16},(_,i)=>load(`/assets/heads/head-${i+1}.png`))),
   Promise.all(Array.from({length:15},(_,i)=>load(`/assets/accessories/accessory-${i+2}.png`))),
-  fetch('/assets/poses-v2/manifest.json?v=20260920-motion3').then(r=>{if(!r.ok)throw new Error('동작 정보를 불러오지 못했어요.');return r.json()}),
+  fetch('/assets/poses-v2/manifest.json?v=20260920-celebration4').then(r=>{if(!r.ok)throw new Error('동작 정보를 불러오지 못했어요.');return r.json()}),
   ...families.map(async family=>{[atlases[family],masks[family]]=await Promise.all([
-   load(`/assets/poses-v2/${family}.png?v=20260920-motion3`),load(`/assets/poses-v2/${family}-skin.png?v=20260920-motion3`)
+   load(`/assets/poses-v2/${family}.png?v=20260920-celebration4`),load(`/assets/poses-v2/${family}-skin.png?v=20260920-celebration4`)
   ])})
  ]);
  for(const family of ['wave','dance','clap','walk']){
@@ -169,8 +169,6 @@ export function drawAvatar(ctx,avatar,x,y,size=80,time=0,moving=false,direction=
   drawExtras(fc,a,pose,body.metadata,headOffset);avatarFrameCache.set(key,frame);trimCache(avatarFrameCache,384);
  }
  ctx.save();ctx.translate(x-size/2,y-size);ctx.scale(size/128,size/128);ctx.imageSmoothingEnabled=false;
- // Spin retains the selected front portrait; directional art is exclusive to walking.
- if(!moving&&a.action==='spin'&&!reduced){ctx.translate(64,0);ctx.scale(Math.cos(time*4),1);ctx.translate(-64,0)}
  ctx.drawImage(avatarFrameCache.get(key),-24,-24);ctx.restore();
 }
 export function paintPreview(canvas,a,time=0,animate=false){const ctx=canvas.getContext('2d');if(canvas.width!==256)canvas.width=256;if(canvas.height!==340)canvas.height=340;ctx.clearRect(0,0,256,340);ctx.fillStyle='#9bad7d30';ctx.beginPath();ctx.ellipse(128,311,48,10,0,0,Math.PI*2);ctx.fill();drawAvatar(ctx,a,128,315,260,time,false,'front',!animate)}
