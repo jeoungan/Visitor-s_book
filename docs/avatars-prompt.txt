@@ -1,0 +1,26 @@
+Use case: stylized-concept
+Asset type: original 16-bit RPG wedding guest avatar sprite pack for a Korean wedding garden.
+Create one 1536x1536 PNG image, EXACTLY 16 DIFFERENT full-body Korean adult guests in an invisible 4 columns by 4 rows grid, equal 384x384 cells. Each cell contains exactly one different person. Every pixel outside each person must be perfectly solid pure magenta #FF00FF. No floor and no cast shadows. No visible grid lines.
+Camera and style: all front-facing toward viewer, calm neutral standing pose with arms relaxed, whole head and shoes visible, slight top-down RPG view, charming elegant 16-bit pixel art with crisp square pixel edges and dark refined outline. Large heads, total body height about 2.8 head heights. Cohesive adult wedding-guest fashion; faces feel Korean with warm neutral skin tone, dark eyes, naturally black or dark brown hair. Same pixel scale and same figure height in every cell, bodies centered exactly on each cell centerline, shoe soles at the same 80%-down position within every cell. The ENTIRE body stays in the central 65% of each cell, generous magenta margins on all four sides. No body, hair, garment, accessory or other element touches or crosses any cell edge. All persons separate. Modern dress code, no bridal gowns and no wedding couple.
+ROW 1, left to right, four MEN:
+1 navy two-piece suit, white shirt, dark tie, black neatly cropped hair.
+2 charcoal suit, light shirt, muted gray tie, black side-part hair.
+3 medium gray double-breasted suit, ivory shirt, dark wavy perm.
+4 brown subtle check jacket, cream shirt, burgundy tie, dark trousers, neat dark side-part hair.
+ROW 2, left to right, four MEN:
+5 beige blazer, dark fine-knit shirt, dark trousers, black crop hair.
+6 navy knit polo shirt, cream trousers, softly waved dark brown hair.
+7 black minimalist suit, black shirt, straight middle-part black hair.
+8 muted sage green collared shirt, charcoal slacks, soft dark brown short perm.
+ROW 3, left to right, four WOMEN:
+9 navy tweed skirt suit, ivory blouse, short dark bob.
+10 pastel blue tweed jacket and skirt, neat black shoulder-length hair.
+11 dusty rose midi dress, dark long wavy hair.
+12 muted sage wrap midi dress, dark low ponytail.
+ROW 4, left to right, four WOMEN:
+13 elegant black midi dress, long black waves.
+14 beige blouse with navy pleated midi skirt, medium dark bob.
+15 charcoal tailored pantsuit, ivory top, neat dark bun.
+16 lavender peplum jacket and matching skirt, black shoulder-length softly curled hair.
+Each guest has different clear hair/clothing silhouette, refined tiny facial features and dress shoes. Controlled small color palettes, lovely game-ready readable design. No bags or large accessories hiding outfits.
+Exact 4x4 grid, exactly sixteen different guests, same full body scale and feet anchor. Solid #FF00FF background only, no background gradients, NO labels, NO text, NO numbers, NO UI, NO border, NO visible grid, NO shadows on magenta, NO watermark.

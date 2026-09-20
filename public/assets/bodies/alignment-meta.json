@@ -1,0 +1,418 @@
+[
+  {
+    "id": 1,
+    "original_crop_bbox": [
+      95,
+      26,
+      213,
+      300
+    ],
+    "output_size": [
+      49,
+      114
+    ],
+    "paste_position": [
+      39,
+      11
+    ],
+    "body_bbox": [
+      39,
+      44,
+      88,
+      125
+    ],
+    "original_feet_y": 125,
+    "body_feet_y": 125,
+    "exact_original_transform": true
+  },
+  {
+    "id": 2,
+    "original_crop_bbox": [
+      95,
+      25,
+      215,
+      300
+    ],
+    "output_size": [
+      50,
+      115
+    ],
+    "paste_position": [
+      39,
+      10
+    ],
+    "body_bbox": [
+      39,
+      44,
+      89,
+      125
+    ],
+    "original_feet_y": 125,
+    "body_feet_y": 125,
+    "exact_original_transform": true
+  },
+  {
+    "id": 3,
+    "original_crop_bbox": [
+      96,
+      22,
+      216,
+      300
+    ],
+    "output_size": [
+      50,
+      116
+    ],
+    "paste_position": [
+      39,
+      9
+    ],
+    "body_bbox": [
+      39,
+      44,
+      89,
+      125
+    ],
+    "original_feet_y": 125,
+    "body_feet_y": 125,
+    "exact_original_transform": true
+  },
+  {
+    "id": 4,
+    "original_crop_bbox": [
+      97,
+      25,
+      216,
+      300
+    ],
+    "output_size": [
+      49,
+      115
+    ],
+    "paste_position": [
+      39,
+      10
+    ],
+    "body_bbox": [
+      39,
+      44,
+      88,
+      125
+    ],
+    "original_feet_y": 125,
+    "body_feet_y": 125,
+    "exact_original_transform": true
+  },
+  {
+    "id": 5,
+    "original_crop_bbox": [
+      93,
+      19,
+      215,
+      300
+    ],
+    "output_size": [
+      51,
+      117
+    ],
+    "paste_position": [
+      38,
+      8
+    ],
+    "body_bbox": [
+      38,
+      44,
+      89,
+      125
+    ],
+    "original_feet_y": 125,
+    "body_feet_y": 125,
+    "exact_original_transform": true
+  },
+  {
+    "id": 6,
+    "original_crop_bbox": [
+      97,
+      19,
+      212,
+      301
+    ],
+    "output_size": [
+      48,
+      118
+    ],
+    "paste_position": [
+      40,
+      7
+    ],
+    "body_bbox": [
+      40,
+      43,
+      88,
+      125
+    ],
+    "original_feet_y": 125,
+    "body_feet_y": 125,
+    "exact_original_transform": true
+  },
+  {
+    "id": 7,
+    "original_crop_bbox": [
+      96,
+      20,
+      216,
+      300
+    ],
+    "output_size": [
+      50,
+      117
+    ],
+    "paste_position": [
+      39,
+      8
+    ],
+    "body_bbox": [
+      39,
+      43,
+      89,
+      125
+    ],
+    "original_feet_y": 125,
+    "body_feet_y": 125,
+    "exact_original_transform": true
+  },
+  {
+    "id": 8,
+    "original_crop_bbox": [
+      96,
+      19,
+      217,
+      300
+    ],
+    "output_size": [
+      50,
+      117
+    ],
+    "paste_position": [
+      39,
+      8
+    ],
+    "body_bbox": [
+      39,
+      44,
+      89,
+      125
+    ],
+    "original_feet_y": 125,
+    "body_feet_y": 125,
+    "exact_original_transform": true
+  },
+  {
+    "id": 9,
+    "original_crop_bbox": [
+      95,
+      23,
+      214,
+      304
+    ],
+    "output_size": [
+      49,
+      117
+    ],
+    "paste_position": [
+      39,
+      8
+    ],
+    "body_bbox": [
+      39,
+      41,
+      88,
+      125
+    ],
+    "original_feet_y": 125,
+    "body_feet_y": 125,
+    "exact_original_transform": true
+  },
+  {
+    "id": 10,
+    "original_crop_bbox": [
+      95,
+      21,
+      215,
+      303
+    ],
+    "output_size": [
+      50,
+      118
+    ],
+    "paste_position": [
+      39,
+      7
+    ],
+    "body_bbox": [
+      39,
+      41,
+      89,
+      125
+    ],
+    "original_feet_y": 125,
+    "body_feet_y": 125,
+    "exact_original_transform": true
+  },
+  {
+    "id": 11,
+    "original_crop_bbox": [
+      93,
+      21,
+      217,
+      304
+    ],
+    "output_size": [
+      51,
+      118
+    ],
+    "paste_position": [
+      38,
+      7
+    ],
+    "body_bbox": [
+      38,
+      41,
+      89,
+      125
+    ],
+    "original_feet_y": 125,
+    "body_feet_y": 125,
+    "exact_original_transform": true
+  },
+  {
+    "id": 12,
+    "original_crop_bbox": [
+      101,
+      22,
+      210,
+      303
+    ],
+    "output_size": [
+      45,
+      117
+    ],
+    "paste_position": [
+      41,
+      8
+    ],
+    "body_bbox": [
+      41,
+      41,
+      86,
+      125
+    ],
+    "original_feet_y": 125,
+    "body_feet_y": 125,
+    "exact_original_transform": true
+  },
+  {
+    "id": 13,
+    "original_crop_bbox": [
+      92,
+      21,
+      216,
+      302
+    ],
+    "output_size": [
+      51,
+      117
+    ],
+    "paste_position": [
+      38,
+      8
+    ],
+    "body_bbox": [
+      38,
+      41,
+      89,
+      125
+    ],
+    "original_feet_y": 125,
+    "body_feet_y": 125,
+    "exact_original_transform": true
+  },
+  {
+    "id": 14,
+    "original_crop_bbox": [
+      97,
+      24,
+      211,
+      302
+    ],
+    "output_size": [
+      47,
+      116
+    ],
+    "paste_position": [
+      40,
+      9
+    ],
+    "body_bbox": [
+      40,
+      41,
+      87,
+      125
+    ],
+    "original_feet_y": 125,
+    "body_feet_y": 125,
+    "exact_original_transform": true
+  },
+  {
+    "id": 15,
+    "original_crop_bbox": [
+      100,
+      15,
+      210,
+      302
+    ],
+    "output_size": [
+      46,
+      120
+    ],
+    "paste_position": [
+      41,
+      5
+    ],
+    "body_bbox": [
+      41,
+      41,
+      87,
+      125
+    ],
+    "original_feet_y": 125,
+    "body_feet_y": 125,
+    "exact_original_transform": true
+  },
+  {
+    "id": 16,
+    "original_crop_bbox": [
+      98,
+      22,
+      214,
+      303
+    ],
+    "output_size": [
+      48,
+      117
+    ],
+    "paste_position": [
+      40,
+      8
+    ],
+    "body_bbox": [
+      40,
+      41,
+      88,
+      125
+    ],
+    "original_feet_y": 125,
+    "body_feet_y": 125,
+    "exact_original_transform": true
+  }
+]
