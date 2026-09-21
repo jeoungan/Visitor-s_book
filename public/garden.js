@@ -1,10 +1,10 @@
-import {movementFacing} from './avatar-state.js?v=20260920-celebration4';
-import {createSpeechScheduler} from './speech.js?v=20260920-celebration4';
-import {drawAvatar,defaultAvatar} from './avatar.js?v=20260920-celebration4';
-import {walkable,nearestPoint,findPath} from './navigation.js?v=20260920-celebration4';
-import {GARDEN_WIDTH,TILE_HEIGHT,gardenHeight} from './world.js?v=20260920-celebration4';
-import {createWanderer,stepWanderer,createNeighborIndex} from './wander.js?v=20260920-celebration4';
-import {tablesForHeight,TABLE_SPRITE} from './venue-layout.js?v=20260920-celebration4';
+import {movementFacing} from './avatar-state.js?v=20260921-pages1';
+import {createSpeechScheduler} from './speech.js?v=20260921-pages1';
+import {drawAvatar,defaultAvatar} from './avatar.js?v=20260921-pages1';
+import {walkable,nearestPoint,findPath} from './navigation.js?v=20260921-pages1';
+import {GARDEN_WIDTH,TILE_HEIGHT,gardenHeight} from './world.js?v=20260921-pages1';
+import {createWanderer,stepWanderer,createNeighborIndex} from './wander.js?v=20260921-pages1';
+import {tablesForHeight,TABLE_SPRITE} from './venue-layout.js?v=20260921-pages1';
 export class Garden{
  constructor(canvas,onSelect,onMove){
  this.world={w:GARDEN_WIDTH,h:TILE_HEIGHT};this.canvas=canvas;this.ctx=canvas.getContext('2d');this.onSelect=onSelect;this.onMove=onMove;this.guests=[];this.player={id:'visitor',name:'나 · 방문객',x:768,y:500,avatar:defaultAvatar()};this.zoom=1;this.camera={x:768,y:0};this.keys=new Set();this.axis={x:0,y:0};this.target=null;this.direction='front';this.paused=false;this.reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;this.t=0;this.selected=null;this.follow=false;this.enabled=true;this.lastSave=0;

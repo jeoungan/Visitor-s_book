@@ -50,3 +50,6 @@ dialog{border:1px solid #dfe3d2;background:var(--paper);color:#364531;border-rad
   .speech{max-height:calc(100dvh - 154px)}
   .action-tray{bottom:calc(66px + env(safe-area-inset-bottom))}
 }
+
+.storage-notice{position:absolute;top:67px;left:18px;right:18px;margin:0;z-index:3;width:fit-content;max-width:calc(100% - 36px);padding:8px 12px;background:#fffdf0ed;color:#4b624b;border:1px solid #d2dbbf;border-radius:6px;font-size:12px;line-height:1.5;pointer-events:none}
+@media(max-width:760px),(max-width:960px) and (max-height:560px),(pointer:coarse) and (max-width:1366px){.storage-notice{top:max(63px,calc(env(safe-area-inset-top) + 57px));left:12px;right:12px;max-width:calc(100% - 24px);padding:6px 9px;font-size:11px}}

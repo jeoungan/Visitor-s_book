@@ -1,5 +1,16 @@
 # 웨딩 가든 인수인계
 
+## 2026-09-21 — GitHub Pages 앱 배포 수정
+
+- 먼저 프로젝트 루트 `AGENTS.md`와 `docs/DEPLOYMENT.md`를 읽습니다. 사용자는 Pages에서 앱 대신 README가 보이는 문제를 고치고 재발 방지 지침으로 저장하라고 명시했습니다.
+- 원인: Pages가 legacy 방식으로 main의 `/`를 게시했고 루트에 앱 index가 없었습니다. 실제 공개 브라우저에서 README 문서 표시를 재현했습니다. 앱은 public/index.html에 있고 `/assets/` 절대 경로와 Node API에 의존했습니다.
+- 앱 주소: `https://jeoungan.github.io/Visitor-s_book/`, 직접 진입: `https://jeoungan.github.io/Visitor-s_book/guestbook/`. 로컬 URL이나 저장소 페이지를 공개 앱으로 대신 전달하지 않습니다.
+- `.github/workflows/pages.yml`이 검사→앱 빌드→dist artifact→Pages→공개 HTTP 검증을 수행합니다. `tools/build_pages.mjs`는 원본 public을 유지하고 출력에서만 저장소 base 경로를 적용하며 두 앱 진입점/local 저장 메타/.nojekyll/build-info.json을 만듭니다. 문서/DB/프롬프트/생성 원본은 artifact에서 제외됩니다.
+- Pages에는 Node 서버가 없으므로 `public/browser-storage.js`가 이 브라우저의 저장을 제공합니다. 화면·등록 동의·성공 화면에 다른 방문자/신랑신부에게 전송되지 않음을 명시했습니다. 기존 서버 모드는 그대로 SQLite를 사용합니다. Pages 성공을 공용 방명록 배포 성공으로 설명하지 않습니다.
+- 코드 검증: npm run check, 전체99개 테스트 통과. 새 회귀17개는 저장소 실패/재시도/기존 동작 호환/순서 보존/앱 artifact/경로/README 재노출 및 오래된 배포 탐지를 검증합니다. 실제 Pages artifact의 localhost4190에서 등록→정원 복귀→새로고침 복원 및 콘솔 오류0을 확인했습니다. 실제 DB에는 쓰지 않았습니다.
+- 배포 완료 판단: 원격 main과 같은 커밋의 Actions 성공, 공개 build-info.revision, HTTP 자산, 실제 공개 브라우저의 Canvas·모바일·데스크톱·상호작용을 모두 확인합니다. 현재 상태는 Actions와 build-info를 조회해 재확인합니다.
+- 현재 작업 폴더는 Codex worktree `C:\Users\jeoun\.codex\worktrees\d0d7\강정이네 청첩장`입니다. 아래 원래 폴더의 PID와 로컬 미리보기는 과거 기록입니다. 최신 공개 링크와 지침이 우선하며 기존 원본 폴더의 실제 데이터를 이동/삭제하지 않습니다.
+
 최신 작업: 2026-09-20 `20260920-celebration4` 회차. 예시 하객을10명에서18명으로 늘리고 신랑·신부를116→184px(약1.6배)로 확대했습니다. 빙그르를 선택지·공유 동작·렌더에서 제거했습니다. **`npm run check`, 자동 테스트82/82, 오프라인320프레임 및 삭제 동작 픽셀 호환, 실제 모바일/데스크톱 검증을 통과했습니다.** 아래 motion3/poses2/9회차는 이전 이력입니다.
 
 ## 최신 전달 정보 — 2026-09-20 celebration4

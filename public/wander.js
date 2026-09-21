@@ -1,5 +1,5 @@
-import {movementFacing} from './avatar-state.js?v=20260920-celebration4';
-import {walkable,findPath,nearestPoint} from './navigation.js?v=20260920-celebration4';
+import {movementFacing} from './avatar-state.js?v=20260921-pages1';
+import {walkable,findPath,nearestPoint} from './navigation.js?v=20260921-pages1';
 
 export function createNeighborIndex(people){
  const cellSize=64,buckets=new Map(),locations=new Map(),key=person=>`${Math.floor(person.x/cellSize)},${Math.floor(person.y/cellSize)}`;

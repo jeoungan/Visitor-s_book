@@ -108,7 +108,7 @@ test('returning from guest detail or registration lets the keyboard move through
   Object.assign(garden,{canvas:$('#garden'),world:{w:1536,h:1024},keys:new Set(),axis:{x:0,y:0},route:[],target:null,player:{id:'mine',x:768,y:500,avatar:{action:'idle'}},guests:[],t:0,npcTime:0,playerGait:0,lastSave:0,follow:false,camera:{x:768,y:500},onSelect(){},paused:true,reduced:false});
   garden.bind();
   const context=vm.createContext({$,garden,document,esc:String,sideName:{both:'두 사람 모두'},paintPreview(){},showSpeech(){},toast(){}});
-  vm.runInContext(`var own={id:'mine',name:'나',side:'both',message:'축하해요',avatar:{action:'idle'},x:768,y:500};${section('function showDetail(','function openJoin(')}${section('function renderSuccess()',"$$('[data-join]')")}`,context);
+  vm.runInContext(`var config={},own={id:'mine',name:'나',side:'both',message:'축하해요',avatar:{action:'idle'},x:768,y:500};${section('function showDetail(','function openJoin(')}${section('function renderSuccess()',"$$('[data-join]')")}`,context);
   $(scenario==='mobile-find'?'#more':scenario==='desktop-find'?'#guest-card':'#mobile-register').focus();
   if(scenario==='registration-view'){$('#join-dialog').showModal();context.renderSuccess();$('#view-me').onclick()}
   else{context.showDetail(context.own);$('#find-guest').focus();$('#find-guest').onclick()}
